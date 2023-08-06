@@ -1,0 +1,48 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
+{
+	"name": "node.js and anaconda environment",
+	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-20-bullseye",
+	"features": {
+		"ghcr.io/devcontainers/features/anaconda:1": {
+			"version": "latest"
+		}
+	},
+	"forwardPorts": [
+		3000,
+		3090
+	],
+	"postCreateCommand": "bash scripts/install.sh",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"dbaeumer.vscode-eslint",
+				"shardulm94.trailing-spaces",
+				"Gruntfuggly.todo-tree",
+				"rangav.vscode-thunder-client",
+				"meganrogge.template-string-converter",
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"Prisma.prisma",
+				"yoavbls.pretty-ts-errors",
+				"christian-kohler.path-intellisense",
+				"quicktype.quicktype",
+				"christian-kohler.npm-intellisense",
+				"DavidAnson.vscode-markdownlint",
+				"shd101wyy.markdown-preview-enhanced",
+				"ms-toolsai.jupyter",
+				"MariusAlchimavicius.json-to-ts",
+				"sleistner.vscode-fileutils",
+				"naumovs.color-highlight",
+				"streetsidesoftware.code-spell-checker",
+				"eamodio.gitlens",
+				"mhutchie.git-graph"
+			]
+		}
+	},
+	"remoteUser": "node",
+	"mounts": [
+		"source=${localWorkspaceFolderBasename}-frontend-node_modules,target=${containerWorkspaceFolder}/frontend/node_modules,type=volume",
+		"source=${localWorkspaceFolderBasename}-d3chart-node_modules,target=${containerWorkspaceFolder}/library/d3chart/node_modules,type=volume"
+	]
+}

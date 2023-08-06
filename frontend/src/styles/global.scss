@@ -1,0 +1,52 @@
+@font-face {
+  font-family: 'Optima';
+  font-style: normal;
+  font-weight: normal;
+  src:
+    local('Optima'),
+    url('../font/optima/OPTIMA.woff') format('woff');
+  unicode-range: U+0020-007E;
+}
+
+@font-face {
+  font-family: 'TaipeiSans';
+  font-style: normal;
+  font-weight: normal;
+  src:
+    local('TaipeiSans'),
+    url('../font/taipei-sans/TaipeiSansTCBeta-Regular.woff') format('woff');
+  unicode-range: U+4E00-9FFF;
+}
+
+/* 捲軸軌道（整個捲軸區域） */
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+/* 捲軸滑塊（拖動捲動的部分） */
+::-webkit-scrollbar-thumb {
+  background-color: #606060;
+  border-radius: 8px;
+}
+
+/* 捲軸滑塊在 hover 狀態下的樣式 */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #505050;
+}
+
+/* 可見捲軸軌道的樣式 */
+::-webkit-scrollbar {
+  width: 8px;
+  background-color: #f1f1f1;
+}
+
+/* 用於封裝捲軸區域的容器 */
+.scrollbar-container {
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: #606060 #f1f1f1;
+}
+
+:root {
+  --cmdk-shadow: 0 16px 70px rgb(0 0 0 / 20%);
+}

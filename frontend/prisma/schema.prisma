@@ -1,0 +1,716 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model VerificationToken {
+  identifier String   @db.NVarChar(128)
+  token      String   @unique @db.NVarChar(128)
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Account {
+  AID               Int     @id(map: "PK_Account") @default(autoincrement())
+  MID               Int
+  type              String  @db.NVarChar(64)
+  provider          String  @db.NVarChar(128)
+  providerAccountId String  @db.NVarChar(128)
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  Member            Member  @relation(fields: [MID], references: [MID], onDelete: Cascade, map: "FK_Account_MID")
+
+  @@unique([provider, providerAccountId])
+}
+
+model Member {
+  MID                            Int        @id(map: "PK_Member")
+  Account                        String     @unique(map: "UQ__Member__B0C3AC460B4FC8F9") @default(cuid()) @db.NVarChar(64) // modified
+  PWD                            String?    @db.NVarChar(40)
+  Valid                          Boolean?
+  LastLoginDT                    DateTime?  @db.DateTime
+  LoginErrCount                  Int        @default(0, map: "DF__Member__LoginErr__778AC167") @db.TinyInt
+  EMail                          String     @unique(map: "UQ_Member_EMail") @default(cuid()) @db.NVarChar(100) // modified
+  Status                         Int?       @db.TinyInt
+  Sex                            Boolean?
+  LoginCount                     Int        @default(0, map: "DF__Member__LoginCou__787EE5A0")
+  VerifyCode                     String?    @db.NVarChar(50)
+  CID                            Int?
+  Birthday                       DateTime?  @db.Date
+  Nation                         Int?       @db.TinyInt
+  Address                        String?    @db.NVarChar(200)
+  Phone                          String?    @db.NVarChar(25)
+  SendEMailOK                    Boolean?
+  Image                          String? // new feature
+  emailVerified                  DateTime? // new feature
+  accounts                       Account[] //new feature
+  sessions                       MSession[] //new feature
+  GM                             GM[]
+  Nation_Member_NationToNation   Nation?    @relation("Member_NationToNation", fields: [Nation], references: [NID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Member_Nation")
+  Object_Object_OwnerMIDToMember Object[]   @relation("Object_OwnerMIDToMember")
+  Object                         Object     @relation("Member_MIDToObject", fields: [MID], references: [OID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Member_MID")
+
+  @@index([Account], map: "IX_Member_Name")
+}
+
+model MSession {
+  SID                                     Int        @id(map: "PK_MSession") @default(autoincrement())
+  MID                                     Int        @default(0, map: "DF__MSession__MID__0E6E26BF")
+  IP                                      String     @db.VarChar(16)
+  UserAgent                               Int?
+  Since                                   DateTime   @default(now(), map: "DF__MSession__Since__0F624AF8") @db.DateTime
+  LastModifiedDT                          DateTime?  @default(now(), map: "DF__MSession__LastMo__10566F31") @db.DateTime
+  ExpiredDT                               DateTime   @db.DateTime
+  PassportCode                            String     @unique(map: "UQ_MSession_PassportCode") @db.NVarChar(512) // modified
+  UserAgent_MSession_UserAgentToUserAgent UserAgent? @relation("MSession_UserAgentToUserAgent", fields: [UserAgent], references: [UAID], onDelete: NoAction, onUpdate: NoAction, map: "FK_MSession_UA")
+  Member                                  Member     @relation(fields: [MID], references: [MID], onDelete: Cascade, map: "FK_MSession_Member") // modified
+}
+
+model Archive {
+  AID                                          Int          @id(map: "PK_Archive")
+  FileName                                     String       @db.NVarChar(128)
+  Keywords                                     String       @default("", map: "DF__Archive__Keyword__6EF57B66") @db.NVarChar(255)
+  Lang                                         Int?         @db.TinyInt
+  Indexable                                    Boolean?
+  IndexInfo                                    String?      @default("", map: "DF__Archive__IndexIn__6FE99F9F") @db.NVarChar(255)
+  ContentLen                                   Int?
+  MD5                                          Bytes?       @db.Binary(16)
+  ContentType                                  Int?         @default(0, map: "DF__Archive__Content__70DDC3D8") @db.SmallInt
+  Object                                       Object       @relation(fields: [AID], references: [OID], onUpdate: NoAction, map: "FK_Archive_AID")
+  ContentType_Archive_ContentTypeToContentType ContentType? @relation("Archive_ContentTypeToContentType", fields: [ContentType], references: [CTID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Archive_CTID")
+
+  @@index([MD5], map: "IX_Archive_MD5")
+}
+
+model Chart {
+  CID         Int           @id(map: "PK_Chart")
+  Type        String?       @db.NVarChar(20)
+  StyleJSTR   String?       @db.NVarChar(Max)
+  Object      Object        @relation(fields: [CID], references: [OID], onUpdate: NoAction, map: "FK_Chart_CID")
+  Infographic Infographic[]
+}
+
+model Class {
+  CID                                 Int           @id(map: "PK_Class") @default(autoincrement())
+  Type                                Int?          @db.SmallInt
+  CName                               String?       @default("", map: "DF__Class__CName__48CFD27E") @db.NVarChar(255)
+  CDes                                String?       @default("", map: "DF__Class__CDes__49C3F6B7") @db.NVarChar(800)
+  EName                               String?       @default("", map: "DF__Class__EName__4AB81AF0") @db.NVarChar(255)
+  EDes                                String?       @default("", map: "DF__Class__EDes__4BAC3F29") @db.NVarChar(800)
+  IDPath                              String?       @unique(map: "UQ_Class_IDPath") @db.NVarChar(255)
+  NamePath                            String?       @unique(map: "UQ_Class_NamePath") @db.NVarChar(800)
+  Since                               DateTime?     @default(now(), map: "DF__Class__Since__4CA06362") @db.DateTime
+  LastModifiedDT                      DateTime?     @default(now(), map: "DF__Class__LastModif__4D94879B") @db.DateTime
+  nObject                             Int           @default(0, map: "DF__Class__nObject__4E88ABD4")
+  cRank                               Int?          @default(0, map: "DF__Class__cRank__4F7CD00D") @db.TinyInt
+  oRank                               Int?          @default(0, map: "DF__Class__oRank__5070F446") @db.TinyInt
+  nLevel                              Int?          @db.TinyInt
+  Layout                              Int?
+  ImgID                               Int           @default(0, map: "DF__Class__ImgID__5165187F") @db.SmallInt
+  nClick                              Int           @default(0, map: "DF__Class__nClick__52593CB8")
+  Keywords                            String?       @default("", map: "DF__Class__Keywords__534D60F1") @db.NVarChar(255)
+  CLayout                             CLayout?      @relation(fields: [Layout], references: [LID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Class_Layout")
+  Entity                              Entity?       @relation(fields: [Type], references: [EID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Class_Type")
+  CO                                  CO[]
+  Inheritance_Inheritance_CCIDToClass Inheritance[] @relation("Inheritance_CCIDToClass")
+  Inheritance_Inheritance_PCIDToClass Inheritance[] @relation("Inheritance_PCIDToClass")
+}
+
+model CLayout {
+  LID   Int     @id(map: "PK_CLayout") @default(autoincrement())
+  LName String? @db.NVarChar(255)
+  LDes  String? @db.NVarChar(900)
+  Class Class[]
+}
+
+model CO {
+  CID    Int
+  OID    Int
+  Rank   Int?   @db.SmallInt
+  MG     Int?   @db.TinyInt
+  Class  Class  @relation(fields: [CID], references: [CID], onUpdate: NoAction, map: "FK_CO_CID")
+  Object Object @relation(fields: [OID], references: [OID], onUpdate: NoAction, map: "FK_CO_OID")
+
+  @@id([CID, OID], map: "PK_CO")
+}
+
+model ContentType {
+  CTID                                     Int       @id(map: "PK_ContentType") @default(autoincrement()) @db.SmallInt
+  Title                                    String    @unique(map: "UQ_ContentType") @db.VarChar(255)
+  Des                                      String?   @db.NVarChar(255)
+  Archive_Archive_ContentTypeToContentType Archive[] @relation("Archive_ContentTypeToContentType")
+}
+
+model Data {
+  DID         Int           @id(map: "PK_Data")
+  MD5         Bytes?        @db.Binary(16)
+  Object      Object        @relation(fields: [DID], references: [OID], onUpdate: NoAction, map: "FK_Data_DID")
+  Infographic Infographic[]
+}
+
+model Entity {
+  EID        Int          @id(map: "PK_Entity") @default(autoincrement()) @db.SmallInt
+  CName      String       @db.NVarChar(50)
+  EName      String       @db.NVarChar(50)
+  bORel      Boolean      @default(true, map: "DF__Entity__bORel__37A5467C")
+  Class      Class[]
+  EntityM2DC EntityM2DC[]
+}
+
+model EntityM2DC {
+  EID       Int     @db.SmallInt
+  Field     String  @db.NVarChar(20)
+  DCField   Int     @db.SmallInt
+  SNo       Int     @default(0, map: "DF__EntityM2DC__SNo__2739D489") @db.TinyInt
+  JsonField String  @db.NVarChar(20)
+  Caption   String? @db.NVarChar(20)
+  Entity    Entity  @relation(fields: [EID], references: [EID], onUpdate: NoAction, map: "FK_EntityM2DC_EID")
+
+  @@id([EID, DCField, SNo, JsonField], map: "PK_EntityM2DC")
+}
+
+model GM {
+  GID    Int
+  MID    Int
+  Role   Int      @db.TinyInt
+  Type   Boolean?
+  Status Boolean?
+  Groups Groups   @relation(fields: [GID], references: [GID], onUpdate: NoAction, map: "FK_GM_GID")
+  Member Member   @relation(fields: [MID], references: [MID], onUpdate: NoAction, map: "FK_GM_MID")
+
+  @@id([GID, MID], map: "PK_GownUs")
+}
+
+model Groups {
+  GID    Int      @id(map: "PK_Groups") @default(autoincrement())
+  GName  String   @unique(map: "UQ_Groups") @db.NVarChar(40)
+  GDes   String?  @db.NVarChar(1024)
+  Status Int?     @db.TinyInt
+  Since  DateTime @default(now(), map: "DF__Groups__Since__01142BA1") @db.DateTime
+  Type   Int?     @db.TinyInt
+  GM     GM[]
+}
+
+model Infographic {
+  IID    Int     @id(map: "PK_Infographic")
+  DID    Int
+  CID    Int
+  CJSTR  String? @db.NVarChar(Max)
+  DJSTR  String? @db.NVarChar(Max)
+  Chart  Chart   @relation(fields: [CID], references: [CID], onUpdate: NoAction, map: "FK_Infographic_CID")
+  Data   Data    @relation(fields: [DID], references: [DID], onUpdate: NoAction, map: "FK_Infographic_DID")
+  Object Object  @relation(fields: [IID], references: [OID], onUpdate: NoAction, map: "FK_Infographic_IID")
+}
+
+model Inheritance {
+  PCID                          Int
+  CCID                          Int
+  Rank                          Int?  @db.SmallInt
+  MG                            Int?  @db.TinyInt
+  Class_Inheritance_CCIDToClass Class @relation("Inheritance_CCIDToClass", fields: [CCID], references: [CID], onUpdate: NoAction, map: "FK_Inheritance_CCID")
+  Class_Inheritance_PCIDToClass Class @relation("Inheritance_PCIDToClass", fields: [PCID], references: [CID], onUpdate: NoAction, map: "FK_Inheritance_PCID")
+
+  @@id([PCID, CCID], map: "PK_Inheritance")
+}
+
+model InvIndexO {
+  TID    Int
+  OID    Int
+  SNo    Int
+  Object Object @relation(fields: [OID], references: [OID], onUpdate: NoAction, map: "FK_InvIndexO_O")
+  Token  Token  @relation(fields: [OID], references: [TID], onUpdate: NoAction, map: "FK_InvIndexO_T")
+
+  @@id([TID, OID, SNo], map: "PK_InvIndexO")
+}
+
+model InvIndexS {
+  TID     Int
+  SID     Int
+  SNo     Int
+  Segment Segment @relation(fields: [SID], references: [SID], onUpdate: NoAction, map: "FK_InvIndexS_S")
+  Token   Token   @relation(fields: [TID], references: [TID], onUpdate: NoAction, map: "FK_InvIndexS_T")
+
+  @@id([TID, SID, SNo], map: "PK_InvIndexS")
+}
+
+model Keyword {
+  KID   Int     @id(map: "PK_Keyword")
+  Words String? @unique(map: "UQ_Keyword") @db.NVarChar(100)
+  POS   Bytes?  @db.Binary(8)
+  Field Bytes?  @db.Binary(16)
+  Token Token   @relation(fields: [KID], references: [TID], onUpdate: NoAction, map: "FK_Keyword")
+
+  @@index([Words], map: "IX_Keyword_Words")
+}
+
+model Keyword_re {
+  KID   Int     @id(map: "PK_Keyword_re")
+  Words String? @unique(map: "UQ_Keyword_re") @db.NVarChar(100)
+  POS   Bytes?  @db.Binary(8)
+  Field Bytes?  @db.Binary(16)
+
+  @@index([Words], map: "IX_Keyword_re_Words")
+}
+
+model LogDir {
+  SID       Int
+  CID       Int
+  Operation Boolean
+  Sort      Int?     @db.TinyInt
+  VisitDate DateTime @default(now(), map: "DF__LogDir__VisitDat__14270015") @db.DateTime
+
+  @@id([SID, VisitDate], map: "PK_LogDir")
+}
+
+model LogError {
+  SID       Int
+  ErrCode   Int?
+  ErrMsg    String?  @db.NVarChar(900)
+  ThrowDate DateTime @default(now(), map: "DF__LogError__ThrowD__2180FB33") @db.DateTime
+
+  @@id([SID, ThrowDate], map: "PK_LogError")
+}
+
+model LogMan {
+  SID        Int
+  TargetType Boolean?
+  TargetID   Int?
+  Operation  Boolean
+  Sort       Int?     @db.TinyInt
+  IndexCount Int?
+  VisitDate  DateTime @default(now(), map: "DF__LogMan__VisitDat__19DFD96B") @db.DateTime
+
+  @@id([SID, VisitDate], map: "PK_LogMan")
+}
+
+model LogManTx {
+  SID        Int
+  Method     Boolean?
+  PostString String?  @db.NVarChar(4000)
+  VisitDate  DateTime @default(now(), map: "DF__LogManTx__VisitD__1CBC4616") @db.DateTime
+
+  @@id([SID, VisitDate], map: "PK_LogManTx")
+}
+
+model LogObject {
+  SID        Int
+  OID        Int
+  Operation  Boolean
+  IndexCount Int?
+  VisitDate  DateTime @default(now(), map: "DF__LogObject__Visit__17036CC0") @db.DateTime
+
+  @@id([SID, VisitDate], map: "PK_LogObject")
+}
+
+model LogSearch {
+  SID         Int      @id
+  QueryString String   @db.NVarChar(60)
+  SearchDate  DateTime @default(now(), map: "DF__LogSearch__Searc__1EA48E88") @db.DateTime
+}
+
+model Nation {
+  NID                          Int      @id(map: "PK_Nation") @default(autoincrement()) @db.TinyInt
+  CountryCode                  String   @db.Char(2)
+  CName                        String   @db.NVarChar(255)
+  EName                        String   @db.NVarChar(255)
+  Member_Member_NationToNation Member[] @relation("Member_NationToNation")
+}
+
+model Object {
+  OID                    Int          @id(map: "PK_Object") @default(autoincrement())
+  Type                   Int          @db.SmallInt
+  CName                  String?      @db.NVarChar(255)
+  CDes                   String?      @db.NVarChar(800)
+  EName                  String?      @db.NVarChar(255)
+  EDes                   String?      @db.NVarChar(800)
+  Since                  DateTime     @default(now(), map: "DF__Object__Since__3A81B327") @db.DateTime
+  LastModifiedDT         DateTime     @default(now(), map: "DF__Object__LastModi__3B75D760") @db.DateTime
+  OtherDT                DateTime     @default(now(), map: "DF__Object__OtherDT__3C69FB99") @db.DateTime
+  DataByte               Bytes?       @db.Binary(1)
+  OwnerMID               Int?
+  nClick                 Int          @default(0, map: "DF__Object__nClick__3D5E1FD2")
+  nOutlinks              Int?
+  nInlinks               Int?
+  bPublished             Boolean      @default(true, map: "DF__Object__bPublish__3E52440B")
+  Archive                Archive?
+  Chart                  Chart?
+  CO                     CO[]
+  Data                   Data?
+  Infographic            Infographic?
+  InvIndexO              InvIndexO[]
+  Member                 Member?      @relation("Member_MIDToObject")
+  OwnerMIDToMember       Member?      @relation("Object_OwnerMIDToMember", fields: [OwnerMID], references: [MID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Object_OwnerMID")
+  ORel_ORel_OID1ToObject ORel[]       @relation("ORel_OID1ToObject")
+  ORel_ORel_OID2ToObject ORel[]       @relation("ORel_OID2ToObject")
+  OS                     OS[]
+  Post                   Post?
+  RawIndexO              RawIndexO[]
+  SO                     SO[]
+  URL                    URL?
+
+  @@index([CName], map: "IX_Object_CName")
+}
+
+model ORel {
+  OID1                     Int
+  OID2                     Int
+  Rank                     Int?
+  Des                      String? @db.NVarChar(255)
+  Object_ORel_OID1ToObject Object  @relation("ORel_OID1ToObject", fields: [OID1], references: [OID], onUpdate: NoAction, map: "FK_ORel_OID1")
+  Object_ORel_OID2ToObject Object  @relation("ORel_OID2ToObject", fields: [OID2], references: [OID], onUpdate: NoAction, map: "FK_ORel_OID2")
+
+  @@id([OID1, OID2], map: "PK_ORel")
+}
+
+model OS {
+  OID       Int
+  SID       Int
+  SNo       Int
+  Field     Bytes?  @default(dbgenerated("0"), map: "DF__OS__Field__76619304") @db.Binary(2)
+  Delimiter String? @db.NVarChar(10)
+  Object    Object  @relation(fields: [OID], references: [OID], onUpdate: NoAction, map: "FK_OS_OID")
+  Segment   Segment @relation(fields: [SID], references: [SID], onUpdate: NoAction, map: "FK_OS_SID")
+
+  @@id([OID, SID, SNo], map: "PK_OS")
+}
+
+model Pattern {
+  PID      Int     @id(map: "PK_Pattern") @default(autoincrement())
+  Words    String? @db.NVarChar(64)
+  Position Int?
+  Token    Token   @relation(fields: [PID], references: [TID], onUpdate: NoAction, map: "FK_Pattern_Token")
+}
+
+model Pattern_Class {
+  CID            Int             @id(map: "PK_Pattern_Class") @default(autoincrement())
+  Type           Int?            @db.SmallInt
+  CName          String?         @db.NVarChar(255)
+  Field          Int?
+  Pattern_Entity Pattern_Entity? @relation(fields: [Type], references: [EID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Pattern_Class_Entity")
+  Pattern_CO     Pattern_CO[]
+}
+
+model Pattern_CO {
+  CID            Int
+  OID            Int
+  Pattern_Class  Pattern_Class  @relation(fields: [CID], references: [CID], onUpdate: NoAction, map: "FK_Pattern_CO_Class")
+  Pattern_Object Pattern_Object @relation(fields: [OID], references: [OID], onUpdate: NoAction, map: "FK_Pattern_CO_Object")
+
+  @@id([CID, OID], map: "PK_Pattern_CO")
+}
+
+model Pattern_Entity {
+  EID            Int              @id(map: "PK_Pattern_Entity") @default(autoincrement()) @db.SmallInt
+  CName          String?          @db.NVarChar(50)
+  EName          String?          @db.NVarChar(50)
+  Pattern_Class  Pattern_Class[]
+  Pattern_Object Pattern_Object[]
+}
+
+model Pattern_Object {
+  OID            Int            @id(map: "PK_Pattern_Object") @default(autoincrement())
+  Type           Int            @db.SmallInt
+  CName          String?        @db.NVarChar(512)
+  CDes           String?        @db.NVarChar(800)
+  EName          String?        @db.NVarChar(800)
+  EDes           String?        @db.NVarChar(800)
+  Pattern_CO     Pattern_CO[]
+  Pattern_Entity Pattern_Entity @relation(fields: [Type], references: [EID], onUpdate: NoAction, map: "FK_Pattern_Object_Entity")
+}
+
+model Permission {
+  CID            Int
+  RoleType       Boolean
+  RoleID         Int
+  PermissionBits Int     @default(1, map: "DF__Permissio__Permi__07C12930") @db.TinyInt
+
+  @@unique([CID, RoleType, RoleID], map: "UQ_Permission")
+}
+
+model Phrase {
+  PID   Int     @id(map: "PK_Phrase")
+  Words String? @unique(map: "UQ_Phrase") @db.NVarChar(100)
+  POS   Bytes?  @db.Binary(8)
+  Field Bytes?  @db.Binary(16)
+  Token Token   @relation(fields: [PID], references: [TID], onUpdate: NoAction, map: "FK_Phrase")
+
+  @@index([Words], map: "IX_Phrase_Words")
+}
+
+model POS {
+  PNum  Int     @id @db.TinyInt
+  CName String? @db.NVarChar(20)
+  EName String? @db.NVarChar(50)
+}
+
+model Post {
+  PID    Int     @id(map: "PK_Post")
+  Detail String? @db.NVarChar(Max)
+  Object Object  @relation(fields: [PID], references: [OID], onUpdate: NoAction, map: "FK_Post_PID")
+}
+
+model RawIndexO {
+  OID    Int
+  TID    Int
+  SNo    Int
+  Object Object @relation(fields: [OID], references: [OID], onUpdate: NoAction, map: "FK_RawIndexO_O")
+  Token  Token  @relation(fields: [OID], references: [TID], onUpdate: NoAction, map: "FK_RawIndexO_T")
+
+  @@id([OID, TID, SNo], map: "PK_RawIndexO")
+}
+
+model RawIndexS {
+  SID     Int
+  TID     Int
+  SNo     Int
+  Segment Segment @relation(fields: [SID], references: [SID], onUpdate: NoAction, map: "FK_RawIndexS_S")
+  Token   Token   @relation(fields: [TID], references: [TID], onUpdate: NoAction, map: "FK_RawIndexS_T")
+
+  @@id([SID, TID, SNo], map: "PK_RawIndexS")
+}
+
+model Segment {
+  SID       Int         @id(map: "PK_Segment") @default(autoincrement())
+  Txt       String?     @unique(map: "UQ_Txt") @db.NVarChar(512)
+  N         Int?        @default(1, map: "DF__Segment__N__503BEA1C")
+  Statud    Bytes?      @default(dbgenerated("0"), map: "DF__Segment__Statud__51300E55") @db.Binary(1)
+  InvIndexS InvIndexS[]
+  OS        OS[]
+  RawIndexS RawIndexS[]
+  SO        SO[]
+}
+
+model SO {
+  SID       Int
+  OID       Int
+  SNo       Int
+  Field     Bytes?  @default(dbgenerated("0"), map: "DF__SO__Field__7B264821") @db.Binary(2)
+  Delimiter String? @db.NVarChar(10)
+  Object    Object  @relation(fields: [OID], references: [OID], onUpdate: NoAction, map: "FK_SO_OID")
+  Segment   Segment @relation(fields: [SID], references: [SID], onUpdate: NoAction, map: "FK_SO_SID")
+
+  @@id([SID, OID, SNo], map: "PK_SO")
+}
+
+model StatusCode {
+  Status Int     @id(map: "PK_Status")
+  Msg    String? @db.NVarChar(64)
+  CDes   String? @db.NVarChar(800)
+  URL    URL[]
+}
+
+model StopWord {
+  SID   Int     @id(map: "PK_StopWord") @default(autoincrement())
+  Words String? @db.NVarChar(64)
+}
+
+model SystemConfig {
+  Name String? @db.NVarChar(50)
+  Des  String? @db.NVarChar(512)
+
+  @@ignore
+}
+
+model Token {
+  TID       Int         @id(clustered: false, map: "PK_Token") @default(autoincrement())
+  Words     String      @unique(map: "UQ_Token") @db.NVarChar(64)
+  Type      Boolean?
+  InterFreq Int?        @default(1, map: "DF__Token__InterFreq__55009F39")
+  IntraFreq Int
+  SE        Float?      @db.Real
+  InvIndexO InvIndexO[]
+  InvIndexS InvIndexS[]
+  Keyword   Keyword?
+  Pattern   Pattern?
+  Phrase    Phrase?
+  RawIndexO RawIndexO[]
+  RawIndexS RawIndexS[]
+}
+
+model UploadTable {
+  id    Int     @id(map: "PK_UploadTable") @default(autoincrement())
+  value String? @db.NVarChar(Max)
+}
+
+model URL {
+  UID         Int         @id(map: "PK_URL")
+  Scheme      Int         @db.SmallInt
+  HostName    String      @db.VarChar(900)
+  Path        String      @default("/", map: "DF__URL__Path__693CA210") @db.NVarChar(900)
+  Title       String?     @db.NVarChar(255)
+  Des         String?     @db.NVarChar(1024)
+  Lang        Int?        @db.TinyInt
+  ContentLen  Int?
+  Keywords    String?     @db.NVarChar(255)
+  Indexable   Boolean?
+  IndexInfo   String?     @db.NVarChar(255)
+  SID         Int?
+  MD5URL      Bytes       @unique(map: "UQ_URL_MD5URL") @db.Binary(16)
+  MD5         Bytes?      @unique(map: "UQ_URL_MD5") @db.Binary(16)
+  ContentType Int?        @db.SmallInt
+  Weight      Int?        @db.TinyInt
+  Crawl       Int?        @db.TinyInt
+  ModifyFreq  Int?
+  OKFreq      Int?
+  URLScheme   URLScheme   @relation(fields: [Scheme], references: [SID], onUpdate: NoAction, map: "FK_URL_Scheme")
+  StatusCode  StatusCode? @relation(fields: [SID], references: [Status], onDelete: NoAction, onUpdate: NoAction, map: "FK_URL_SID")
+  Object      Object      @relation(fields: [UID], references: [OID], onUpdate: NoAction, map: "FK_URL_UID")
+}
+
+model URLScheme {
+  SID    Int     @id(map: "PK_URLScheme") @default(autoincrement()) @db.SmallInt
+  Scheme String? @unique(map: "UQ_URLScheme") @db.NVarChar(10)
+  CDes   String? @db.NVarChar(255)
+  URL    URL[]
+}
+
+model UserAgent {
+  UAID                                   Int        @id(map: "PK__UserAgen__B3FEF0C7466F3A3F") @default(autoincrement())
+  UAString                               String     @unique(map: "UQ__UserAgen__FD71D4C708330F49") @db.NVarChar(850)
+  Since                                  DateTime   @default(now(), map: "DF__UserAgent__Since__0B91BA14") @db.DateTime
+  MSession_MSession_UserAgentToUserAgent MSession[] @relation("MSession_UserAgentToUserAgent")
+}
+
+view vd_Patext_Class2Object {
+  CID    Int     @id
+  CType  Int?    @db.SmallInt
+  CCName String? @db.NVarChar(255)
+  Field  Int?
+  OID    Int
+  Type   Int     @db.SmallInt
+  OCName String? @db.NVarChar(512)
+  OCDes  String? @db.NVarChar(800)
+}
+
+view vd_PatternList {
+  id    Int     @id
+  Type  String? @db.NVarChar(255)
+  Exp   String? @db.NVarChar(1312)
+  Field Int?
+}
+
+view vd_URL {
+  OID            Int      @id
+  Type           Int      @db.SmallInt
+  CName          String?  @db.NVarChar(255)
+  CDes           String?  @db.NVarChar(800)
+  Scheme         String?  @db.NVarChar(10)
+  HostName       String   @db.VarChar(900)
+  Path           String   @db.NVarChar(900)
+  Title          String?  @db.NVarChar(255)
+  URLDes         String?  @db.NVarChar(1024)
+  MIMEType       String   @db.VarChar(255)
+  Keywords       String?  @db.NVarChar(255)
+  Lang           Int?     @db.TinyInt
+  Indexable      Boolean?
+  IndexInfo      String?  @db.NVarChar(255)
+  nClick         Int
+  Since          DateTime @db.DateTime
+  LastModifiedDT DateTime @db.DateTime
+}
+
+view vd_Member {
+  OID            Int       @id
+  Type           Int       @db.SmallInt
+  CName          String?   @db.NVarChar(255)
+  EName          String?   @db.NVarChar(255)
+  Account        String    @db.NVarChar(30)
+  PWD            String?   @db.NVarChar(40)
+  Email          String?   @db.NVarChar(100)
+  Phone          String?   @db.NVarChar(25)
+  Address        String?   @db.NVarChar(200)
+  Birthday       DateTime? @db.Date
+  Valid          Boolean?
+  LastLoginDT    DateTime? @db.DateTime
+  LoginErrCount  Int       @db.TinyInt
+  LoginCount     Int
+  VerifyCode     String?   @db.NVarChar(50)
+  nClick         Int
+  Since          DateTime  @db.DateTime
+  SendEmailok    Boolean?
+  LastModifiedDT DateTime  @db.DateTime
+}
+
+view vd_Archive {
+  OID            Int      @id
+  Type           Int      @db.SmallInt
+  CName          String?  @db.NVarChar(255)
+  FileName       String   @db.NVarChar(128)
+  MIMEType       String   @db.VarChar(255)
+  nClick         Int
+  Keywords       String   @db.NVarChar(255)
+  Lang           Int?     @db.TinyInt
+  Indexable      Boolean?
+  IndexInfo      String?  @db.NVarChar(255)
+  Since          DateTime @db.DateTime
+  LastModifiedDT DateTime @db.DateTime
+}
+
+view vd_SubClass {
+  cid    Int     @id
+  pcname String? @db.NVarChar(255)
+  ccid   Int
+  ccname String? @db.NVarChar(255)
+  type   Int?    @db.SmallInt
+  rank   Int?    @db.SmallInt
+}
+
+view vd_ObjectList {
+  cid   Int     @id
+  cname String? @db.NVarChar(255)
+  oid   Int
+  oname String? @db.NVarChar(255)
+  type  Int     @db.SmallInt
+  rank  Int?    @db.SmallInt
+}
+
+view vd_ShowObject {
+  oid   Int      @id @default(autoincrement())
+  type  Int      @db.SmallInt
+  cname String?  @db.NVarChar(255)
+  cdes  String?  @db.NVarChar(800)
+  since DateTime @db.DateTime
+  mid   Int?
+}
+
+view vd_ShowObjectRel {
+  oid    Int     @id
+  cname  String? @db.NVarChar(255)
+  oid2   Int
+  cname2 String? @db.NVarChar(255)
+  Rank   Int?
+  Des    String? @db.NVarChar(255)
+}
+
+view vd_Data {
+  id           Int     @id
+  ownerID      Int?
+  name         String? @db.NVarChar(255)
+  description  String? @db.NVarChar(800)
+  since        String? @db.VarChar(30)
+  lastModified String? @db.VarChar(30)
+  frequency    Int
+  md5          Bytes?  @db.Binary(16)
+}
+
+view vd_Chart {
+  id           Int     @id
+  title        String? @db.NVarChar(255)
+  subtitle     String? @db.NVarChar(255)
+  description  String? @db.NVarChar(800)
+  since        String? @db.VarChar(30)
+  lastModified String? @db.VarChar(30)
+  type         String? @db.NVarChar(20)
+  style        String? @db.NVarChar(Max)
+}

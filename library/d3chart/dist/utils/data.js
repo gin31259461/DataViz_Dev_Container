@@ -1,0 +1,1 @@
+import"core-js/modules/es.array.map.js";import*as d3 from"d3";export function groupData(keys,data,xData){return keys.map(function(k){var newData=[];return d3.map(data,function(d,i){var keyValue=d[k];newData.push({x:xData[i],y:keyValue,stackedY:keyValue,key:k,defined:"number"==typeof xData?!isNaN(xData[i])&&!isNaN(keyValue):!isNaN(keyValue)})}),{group:k,value:newData}})}

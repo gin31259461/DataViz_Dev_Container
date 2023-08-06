@@ -1,0 +1,103 @@
+.container {
+  position: sticky;
+  top: 0;
+  z-index: 150;
+  width: 100%;
+  height: max-content;
+}
+
+.navbar-container {
+  z-index: 10;
+  display: flex;
+  width: 100%;
+  height: 60px;
+  backdrop-filter: blur(3px);
+  position: relative;
+  align-items: center;
+  // 參考 MUI 的 Container component css
+  max-width: 1200px;
+  padding-left: 24px;
+  padding-right: 24px;
+  margin-left: auto;
+  margin-right: auto;
+  //-----------------------------------
+}
+
+.backdrop {
+  position: absolute;
+  height: calc(100vh - 60px);
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.navMenu {
+  display: flex;
+  align-items: center;
+  margin-left: 64px;
+
+  .navMenuFirst {
+    @media only screen and (max-width: 1050px) {
+      display: none;
+    }
+  }
+
+  .navMenuSecond {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    right: 0;
+
+    .navMenuSecond-1 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      @media only screen and (max-width: 700px) {
+        display: none;
+      }
+    }
+
+    .CMDK {
+      font-size: 12px;
+      min-width: 20px;
+      padding: 4px;
+      height: 20px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-transform: none;
+      cursor: default;
+
+      display: none;
+
+      @media only screen and (max-width: 700px) {
+        display: flex;
+      }
+    }
+
+    .navMenuListButton {
+      display: none;
+
+      @media only screen and (max-width: 1050px) {
+        display: flex;
+      }
+    }
+  }
+}
+
+.navMenuOpen {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.navMenuClose {
+  transform: translateY(-500px);
+  opacity: 0;
+}

@@ -1,0 +1,28 @@
+{
+  "presets": [
+    ["@babel/preset-env", {
+      "useBuiltIns": "usage",
+      "modules": false,
+      "corejs": 3.6
+    }],
+    "@babel/preset-react",
+    "@babel/preset-typescript",
+    ["minify", {
+      "builtIns": false,
+      "evaluate": false,
+      "mangle": false
+    }]
+  ],
+  "comments": false,
+  "plugins": [
+    "@babel/plugin-proposal-class-properties",
+    "transform-remove-debugger",
+    ["babel-plugin-module-resolver", {
+      "root": ["./src"],
+      "alias": {
+        "@": "./src"
+      }
+    }],
+    "babel-plugin-tsconfig-paths"
+  ]
+}

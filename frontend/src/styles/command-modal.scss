@@ -1,0 +1,153 @@
+.command-menu {
+  [cmdk-dialog] {
+    max-width: 640px;
+    max-height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  [cmdk-root] {
+    max-width: 640px;
+    width: 100%;
+    padding: 8px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--cmdk-shadow);
+    transition: transform 100ms ease;
+  }
+
+  [cmdk-input] {
+    border: none;
+    width: 100%;
+    font-size: 17px;
+    padding: 8px;
+    outline: none;
+    border-radius: 0;
+  }
+
+  [cmdk-vercel-badge] {
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    margin: 4px 0 4px 4px;
+    user-select: none;
+    text-transform: capitalize;
+    font-weight: 500;
+  }
+
+  [cmdk-item] {
+    content-visibility: auto;
+
+    cursor: pointer;
+    height: 48px;
+    border-radius: 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px;
+    user-select: none;
+    will-change: background, color;
+    transition: all 150ms ease;
+    transition-property: none;
+
+    & + [cmdk-item] {
+      margin-top: 4px;
+    }
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  [cmdk-list] {
+    height: min(330px, calc(var(--cmdk-list-height)));
+    max-height: 400px;
+    overflow: auto;
+    overscroll-behavior: contain;
+    transition: 100ms ease;
+    transition-property: height;
+  }
+
+  [cmdk-vercel-shortcuts] {
+    display: flex;
+    margin-left: auto;
+    gap: 8px;
+
+    kbd {
+      font-size: 12px;
+      min-width: 20px;
+      padding: 4px;
+      height: 20px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-transform: uppercase;
+    }
+  }
+
+  [cmdk-separator] {
+    height: 1px;
+    width: 100%;
+    margin: 4px 0;
+  }
+
+  *:not([hidden]) + [cmdk-group] {
+    margin-top: 8px;
+  }
+
+  [cmdk-group-heading] {
+    user-select: none;
+    font-size: 12px;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  [cmdk-empty] {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 48px;
+    white-space: pre-wrap;
+  }
+}
+
+.open-cmdk-button {
+  --search-size: 32px;
+  all: unset;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--search-size);
+  white-space: nowrap;
+  border-radius: 6px;
+  padding: 0 6px 0 8px;
+  font-size: 14px;
+  transition-property: background, color;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
+  background-color: #eeeeee;
+  color: #9e9e9e;
+
+  kbd {
+    margin-left: 32px;
+    font-size: 8px;
+    min-width: 10px;
+    padding: 4px;
+    height: 10px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

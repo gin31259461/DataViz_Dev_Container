@@ -1,0 +1,1 @@
+export function createTitle(svg,props){var title=svg.append("g");return title.call(function(g){return g.append("text").attr("x",props.margin.left+(props.base.width-props.margin.right-props.margin.left)/2).attr("y",props.margin.top/2).style("font-weight",550).style("font-size","20px").attr("text-anchor","middle").style("fill","currentColor").text(props.base.title)}),title}

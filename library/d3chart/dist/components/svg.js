@@ -1,0 +1,1 @@
+import{select}from"d3";export function createSVG(element,width,height){var svg=select(element.current).attr("width",width).attr("height",height).attr("viewBox",[0,0,width,height]).attr("font-family","Source Sans Pro, sans-serif").attr("overflow","visible");return svg}

@@ -1,0 +1,69 @@
+[
+  {
+    "title": "Area Chart",
+    "light_src": "/assets/images/charts/area.png",
+    "dark_src": "/assets/images/charts/area.png",
+    "href": "/"
+  },
+  {
+    "title": "Area Stacked Chart",
+    "light_src": "/assets/images/charts/area-stack.png",
+    "dark_src": "/assets/images/charts/area-stack.png",
+    "href": "/"
+  },
+  {
+    "title": "Bar Grouped Chart",
+    "light_src": "/assets/images/charts/bar-group.png",
+    "dark_src": "/assets/images/charts/bar-group.png",
+    "href": "/"
+  },
+  {
+    "title": "Bar Stacked Chart",
+    "light_src": "/assets/images/charts/bar-stack.png",
+    "dark_src": "/assets/images/charts/bar-stack.png",
+    "href": "/"
+  },
+  {
+    "title": "Bubble Chart",
+    "light_src": "/assets/images/charts/bubble.png",
+    "dark_src": "/assets/images/charts/bubble.png",
+    "href": "/"
+  },
+  {
+    "title": "Pie Chart",
+    "light_src": "/assets/images/charts/pie.png",
+    "dark_src": "/assets/images/charts/pie.png",
+    "href": "/"
+  },
+  {
+    "title": "Doughnut Chart",
+    "light_src": "/assets/images/charts/doughnut.png",
+    "dark_src": "/assets/images/charts/doughnut.png",
+    "href": "/"
+  },
+  {
+    "title": "Line Chart",
+    "light_src": "/assets/images/charts/line.png",
+    "dark_src": "/assets/images/charts/line.png",
+    "href": "/"
+  },
+  {
+    "title": "Scatter Chart",
+    "light_src": "/assets/images/charts/scatter.png",
+    "dark_src": "/assets/images/charts/scatter.png",
+    "href": "/"
+  },
+  {
+    "title": "Calendar Heatmap",
+    "light_src": "/assets/images/charts/calendar-heatmap-light.png",
+    "dark_src": "/assets/images/charts/calendar-heatmap-dark.png",
+    "alt": "calendar heatmap",
+    "href": "/"
+  },
+  {
+    "title": "Word Cloud",
+    "light_src": "/assets/images/charts/word-cloud.png",
+    "dark_src": "/assets/images/charts/word-cloud.png",
+    "href": "/"
+  }
+]

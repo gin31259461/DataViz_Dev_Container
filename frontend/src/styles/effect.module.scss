@@ -1,0 +1,62 @@
+.typing-effect {
+  --cursor-color: black;
+  --background-color: white;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 0;
+  border-color: var(cursor-color);
+  border-right-style: solid;
+  border-width: 2px;
+  padding-right: 3px;
+
+  @media only screen and (max-width: 400px) {
+    display: none;
+  }
+}
+
+.typing-effect.typing {
+  animation: typing 0.5s steps(40, end) forwards;
+}
+
+.typing-effect.deleting {
+  animation: deleting 0.5s steps(60, end) forwards;
+}
+
+.typing-effect.flash-border {
+  width: 100%;
+  animation: border-flash 1s ease-out infinite;
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes deleting {
+  from {
+    width: 100%;
+  }
+
+  to {
+    width: 0;
+  }
+}
+
+@keyframes border-flash {
+  0% {
+    border-color: var(--background-color);
+  }
+
+  50% {
+    border-color: var(--cursor-color);
+  }
+
+  100% {
+    border-color: var(--background-color);
+  }
+}
