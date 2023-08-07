@@ -54,10 +54,10 @@ def decisionTreeServer():
     result = db.execute(
         text("select * from RawDB.dbo.D" + request.args.get("oid")))
     df = pd.DataFrame(result.fetchall(), columns=result.keys())
-    # result = decisionTreeHandler(
-    #     df, request.args.get("target"),
-    #     request.args.get("features").split(","))
-    # return json.dumps(result)
+    result = decisionTreeHandler(
+        df, request.args.get("target"),
+        request.args.get("features").split(","))
+    return json.dumps(result)
 
 
 if __name__ == "__main__":

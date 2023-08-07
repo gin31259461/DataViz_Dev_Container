@@ -2,17 +2,14 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
 {
 	"name": "node.js and anaconda environment",
-	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-20-bullseye",
-	"features": {
-		"ghcr.io/devcontainers/features/anaconda:1": {
-			"version": "latest"
-		}
+	"build": {
+		"dockerfile": "Dockerfile"
 	},
 	"forwardPorts": [
 		3000,
 		3090
 	],
-	"postCreateCommand": "bash scripts/install.sh",
+	"postCreateCommand": "bash initial.sh",
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -36,11 +33,12 @@
 				"naumovs.color-highlight",
 				"streetsidesoftware.code-spell-checker",
 				"eamodio.gitlens",
-				"mhutchie.git-graph"
+				"mhutchie.git-graph",
+				"ms-azuretools.vscode-docker"
 			]
 		}
 	},
-	"remoteUser": "node",
+	"remoteUser": "root",
 	"mounts": [
 		"source=${localWorkspaceFolderBasename}-frontend-node_modules,target=${containerWorkspaceFolder}/frontend/node_modules,type=volume",
 		"source=${localWorkspaceFolderBasename}-d3chart-node_modules,target=${containerWorkspaceFolder}/library/d3chart/node_modules,type=volume"
