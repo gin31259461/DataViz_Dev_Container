@@ -9,6 +9,7 @@ import json
 
 file_path = f'{Path(__file__).parent.absolute()}/temp/temp.dot'
 
+
 def decisionTreeHandler(data: pd.DataFrame, target: str, features: list):
     mappings = {}
 
@@ -17,9 +18,8 @@ def decisionTreeHandler(data: pd.DataFrame, target: str, features: list):
         data[feature] = LabelEncoder().fit_transform(data[feature])
         encoded_values = data[feature].tolist()
         mappings[feature] = {
-            encoded_value: original_string for original_string, encoded_value in zip(
-                original_strings, encoded_values
-            )
+            encoded_value: original_string
+            for original_string, encoded_value in zip(original_strings, encoded_values)
         }
 
     max_depth = 5
@@ -63,12 +63,13 @@ def decisionTreeHandler(data: pd.DataFrame, target: str, features: list):
     # best_ccp_alpha = ccp_alphas[np.argmax(test_scores)]
     # # ---------------------------------------- end
 
-    clf = (DecisionTreeClassifier(
-        criterion="entropy",
-        random_state=0,
-        max_depth=max_depth,
-        # ccp_alpha=best_ccp_alpha,  # Cost-Complexity Pruning
-    ))
+    clf = (
+        DecisionTreeClassifier(
+            criterion="entropy",
+            random_state=0,
+            max_depth=max_depth,
+            # ccp_alpha=best_ccp_alpha,  # Cost-Complexity Pruning
+        ))
     clf.fit(data_feature, data_target)
 
     print(file_path)
@@ -95,10 +96,12 @@ def decisionTreeHandler(data: pd.DataFrame, target: str, features: list):
     # filter needed part
     result["nodes"] = list(
         map(
-            lambda o: {"id": o.get("_gvid"), "labels": o.get("label").split("\\n")},
+            lambda o: {
+                "id": o.get("_gvid"),
+                "labels": o.get("label").split("\\n")
+            },
             dictGraph.get("objects"),
-        )
-    )
+        ))
 
     result["edges"] = dict(
         map(
@@ -112,8 +115,7 @@ def decisionTreeHandler(data: pd.DataFrame, target: str, features: list):
                 },
             ),
             dictGraph.get("edges"),
-        )
-    )
+        ))
 
     result["mappings"] = mappings
 
