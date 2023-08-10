@@ -1,29 +1,21 @@
-import tempfile
+import sys
 import pandas as pd
 from pandas.core.api import DataFrame
 import json
 from flask import Flask, request
 from flask_cors import CORS
-from sqlalchemy import create_engine, text
+from sqlalchemy import text
+from pathlib import Path
+import tempfile
+
+sys.path.insert(1, f'{Path(__file__).parent.parent.absolute()}/classification')
 from decisionTree import decisionTreeHandler
+from setup import MsSqlSetup
 
 server = Flask(__name__)
 CORS(server)
 
-# mssql connection setting
-f = open("mssql.json")
-jos = json.load(f)
-f.close()
-conf = jos[0]["local"]
-drv = conf["driver"]
-uid = conf["uid"]
-pwd = conf["pwd"]
-srv = conf["server"]
-ins = conf["instance"]
-pno = conf["port"]
-db = conf["db"]
-str = f"mssql+pyodbc://{uid}:{pwd}@{srv}{ins}:{pno}/{db}?driver={drv}"
-db = create_engine(str, fast_executemany=True)
+db = MsSqlSetup()
 
 
 def dataToSQL(data: DataFrame, lastID="0"):
@@ -51,14 +43,11 @@ def uploadCsvServer():
 
 @server.route("/api/decisionTree", methods=["GET"])
 def decisionTreeServer():
-    result = db.execute(
-        text("select * from RawDB.dbo.D" + request.args.get("oid")))
+    result = db.execute(text("select * from RawDB.dbo.D" + request.args.get("oid")))
     df = pd.DataFrame(result.fetchall(), columns=result.keys())
-    result = decisionTreeHandler(
-        df, request.args.get("target"),
-        request.args.get("features").split(","))
+    result = decisionTreeHandler(df, request.args.get("target"), request.args.get("features").split(","))
     return json.dumps(result)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     server.run(debug=True, host="localhost", port=3090)

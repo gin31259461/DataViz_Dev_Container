@@ -1,3 +1,4 @@
+from pathlib import Path
 import pandas as pd
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import tree
@@ -6,6 +7,7 @@ from sklearn.model_selection import train_test_split
 from graphviz import Source
 import json
 
+file_path = f'{Path(__file__).parent.absolute()}/temp/temp.dot'
 
 def decisionTreeHandler(data: pd.DataFrame, target: str, features: list):
     mappings = {}
@@ -69,9 +71,11 @@ def decisionTreeHandler(data: pd.DataFrame, target: str, features: list):
     ))
     clf.fit(data_feature, data_target)
 
+    print(file_path)
+
     dotData = tree.export_graphviz(
         clf,
-        out_file="temp/temp.dot",
+        out_file=file_path,
         feature_names=features,
         max_depth=max_depth,
         label="all",
@@ -79,7 +83,7 @@ def decisionTreeHandler(data: pd.DataFrame, target: str, features: list):
         filled=True,
     )
 
-    with open("temp/temp.dot", "r", encoding="utf-8") as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         dotData = f.read()
 
     # use graphviz lib to convert dot format to json format

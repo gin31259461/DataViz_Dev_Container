@@ -1,5 +1,2 @@
-/express/temp/
-/express/node_modules/
-/flask/__pycache__
-/flask/temp/
-/flask/decisionTree/
+/**/__pycache__
+/**/temp/
