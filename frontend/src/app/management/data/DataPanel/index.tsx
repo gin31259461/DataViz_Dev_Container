@@ -115,6 +115,7 @@ export const DataPanel: React.FC<DataPanelProps> = ({ flaskServer }) => {
     [orderBy],
   );
 
+  // FIXME: here has file upload bugs, due to race condition
   const submitForm = async (FormData: FormData) => {
     try {
       await postData.mutateAsync({
@@ -123,17 +124,14 @@ export const DataPanel: React.FC<DataPanelProps> = ({ flaskServer }) => {
         des: FormData.get('des')?.toString() ?? '',
       });
 
-      FormData.delete('name');
-      FormData.delete('des');
-
       if (lastObjectID.data) {
         FormData.append('lastID', (Number(lastObjectID.data) + 1).toString());
-      } else FormData.append('lastID', '0');
+        await fetch(`${flaskServer}/api/uploadCsv`, {
+          method: 'POST',
+          body: FormData,
+        });
+      }
 
-      await fetch(`${flaskServer}/api/uploadCsv`, {
-        method: 'POST',
-        body: FormData,
-      });
       setSubmitSuccess(true);
       setMessage('Upload Successfully');
     } catch (error) {

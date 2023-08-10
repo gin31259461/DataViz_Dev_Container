@@ -11,16 +11,30 @@ from sqlalchemy import text
 import tempfile
 import pandas as pd
 from pandas.core.api import DataFrame
-from setup import use_mssql_connection
+from sqlalchemy import create_engine
 
-db = use_mssql_connection()
+f = open(f'{Path(__file__).parent.absolute()}/mssql.json')
+jos = json.load(f)
+f.close()
+conf = jos[0]["local"]
+drv = conf["driver"]
+uid = conf["uid"]
+pwd = conf["pwd"]
+srv = conf["server"]
+ins = conf["instance"]
+pno = conf["port"]
+db = conf["db"]
+str = f"mssql+pyodbc://{uid}:{pwd}@{srv}{ins}:{pno}/{db}?driver={drv}"
+db = create_engine(str, fast_executemany=True)
 
 server = Flask(__name__)
 CORS(server)
 
+
 def data_to_sql(data: DataFrame, lastID="0"):
     df = pd.DataFrame(data)
     df.to_sql("D" + lastID, db, if_exists="replace", index=False, schema="dbo")
+
 
 @server.route("/api/uploadCsv", methods=["POST"])
 def upload_router():
@@ -49,5 +63,6 @@ def decision_tree_router():
     result = decisionTreeHandler(df, request.args.get("target"), request.args.get("features").split(","))
     return json.dumps(result)
 
+
 if __name__ == '__main__':
-    server.run(debug=True, host="localhost", port=3090)
+    server.run(debug=True, host="127.0.0.1", port=3090)
