@@ -1,10 +1,10 @@
 import { CommandModal } from '@/components/Modal/CommandModal';
 import Navbar from '@/components/Navbar';
-import '@/styles/global.scss';
-import { Session } from 'next-auth';
 import { Provider } from '../components/Provider';
 import { TrpcProvider } from '../components/Provider/TrpcProvider';
 import style from '../styles/rootLayout.module.scss';
+import '@/styles/global.scss';
+import { Session } from 'next-auth';
 
 export const metadata = {
   title: 'DataViz',

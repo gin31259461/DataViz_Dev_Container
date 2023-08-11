@@ -12,6 +12,7 @@ export default function ContextMenu({ children, maxWidth, id }: ContextMenuProps
 
   const handleContextMenu = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
+
     setAnchorPosition({
       top: event.pageY - window.scrollY,
       left: event.pageX - 20,

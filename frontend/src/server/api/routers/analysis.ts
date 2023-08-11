@@ -44,7 +44,7 @@ export const analysisRouter = createTRPCRouter({
     .query(async ({ input }) => {
       if (!(input.oid && input.target && input.features)) return [];
       const result = await fetch(
-        `${env.FLASK_URL}/api/decisionTree?` +
+        `${env.FLASK_URL}/api/decision_tree?` +
           `oid=${input.oid}` +
           `&target=${input.target}` +
           `&features=${input.features}`,

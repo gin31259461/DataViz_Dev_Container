@@ -41,7 +41,7 @@ def upload_router():
     lastID = request.form["lastID"]
     if request.files:
         csvFile = request.files["file"]
-        tempFile = tempfile.NamedTemporaryFile(delete=True)
+        tempFile = tempfile.NamedTemporaryFile(delete=False)
         csvFile.save(tempFile.name)
         with open(tempFile.name, "rb") as f:
             data = pd.read_csv(f, encoding="utf-8")

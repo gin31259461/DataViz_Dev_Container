@@ -1,10 +1,10 @@
 'use client';
 
 import { useSplitLineStyle } from '@/hooks/useStyles';
+import { CommandModalContext } from './Provider';
 import '@/styles/command-modal.scss';
 import { styled, useTheme } from '@mui/material';
 import { useContext } from 'react';
-import { CommandModalContext } from './Provider';
 
 interface CtrlKProps {
   className: string;

@@ -115,7 +115,6 @@ export const DataPanel: React.FC<DataPanelProps> = ({ flaskServer }) => {
     [orderBy],
   );
 
-  // FIXME: here has file upload bugs, due to race condition
   const submitForm = async (FormData: FormData) => {
     try {
       await postData.mutateAsync({
