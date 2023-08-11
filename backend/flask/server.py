@@ -36,7 +36,7 @@ def data_to_sql(data: DataFrame, lastID="0"):
     df.to_sql("D" + lastID, db, if_exists="replace", index=False, schema="dbo")
 
 
-@server.route("/api/uploadCsv", methods=["POST"])
+@server.route("/api/upload", methods=["POST"])
 def upload_router():
     lastID = request.form["lastID"]
     if request.files:
@@ -56,7 +56,7 @@ def upload_router():
     return "upload csv successfully"
 
 
-@server.route("/api/decisionTree", methods=["GET"])
+@server.route("/api/decision_tree", methods=["GET"])
 def decision_tree_router():
     result = db.execute(text("select * from RawDB.dbo.D" + request.args.get("oid")))
     df = pd.DataFrame(result.fetchall(), columns=result.keys())

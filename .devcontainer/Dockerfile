@@ -16,7 +16,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
 RUN apt-get install -y nodejs
 
 # Set the working directory inside the container
-WORKDIR /app
+WORKDIR /workspaces
 
 # Download and install the Anaconda installer
 ENV ANACONDA_VERSION=2023.07-2

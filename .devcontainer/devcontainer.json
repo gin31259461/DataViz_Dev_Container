@@ -41,6 +41,7 @@
 	"remoteUser": "root",
 	"mounts": [
 		"source=${localWorkspaceFolderBasename}-frontend-node_modules,target=${containerWorkspaceFolder}/frontend/node_modules,type=volume",
-		"source=${localWorkspaceFolderBasename}-d3chart-node_modules,target=${containerWorkspaceFolder}/library/d3chart/node_modules,type=volume"
+		"source=${localWorkspaceFolderBasename}-d3chart-node_modules,target=${containerWorkspaceFolder}/library/d3chart/node_modules,type=volume",
+		"source=${localWorkspaceFolderBasename}-frontend-next,target=${containerWorkspaceFolder}/frontend/.next,type=volume"
 	]
 }

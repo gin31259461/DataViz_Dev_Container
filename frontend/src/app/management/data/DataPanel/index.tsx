@@ -124,23 +124,27 @@ export const DataPanel: React.FC<DataPanelProps> = ({ flaskServer }) => {
         des: FormData.get('des')?.toString() ?? '',
       });
 
+      await lastObjectID.refetch();
+
       if (lastObjectID.data) {
         FormData.append('lastID', (Number(lastObjectID.data) + 1).toString());
-        await fetch(`${flaskServer}/api/uploadCsv`, {
+        await fetch(`${flaskServer}/api/upload`, {
           method: 'POST',
           body: FormData,
         });
+        setSubmitSuccess(true);
+        setMessage('Upload Successfully');
+      } else {
+        setSubmitSuccess(false);
+        setMessage('Upload error, please try again later');
       }
-
-      setSubmitSuccess(true);
-      setMessage('Upload Successfully');
     } catch (error) {
       setSubmitError(true);
       setMessage('Upload error, please try again later');
       console.log(error);
     }
-    someDataObject.refetch();
-    dataCounts.refetch();
+    await someDataObject.refetch();
+    await dataCounts.refetch();
   };
 
   const handleDelete = async (dataSetId: number) => {
@@ -148,8 +152,8 @@ export const DataPanel: React.FC<DataPanelProps> = ({ flaskServer }) => {
     setMessage('Delete Successfully');
     setDeleteSuccess(true);
     setSelectDataOid(undefined);
-    someDataObject.refetch();
-    dataCounts.refetch();
+    await someDataObject.refetch();
+    await dataCounts.refetch();
   };
 
   const DataTable = useMemo(() => {
